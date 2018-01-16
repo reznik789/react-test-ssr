@@ -27,9 +27,14 @@ app.get("*", (req, res) => {
 
   Promise.all(promises)
     .then(() => {
+      const context = {};
       console.log("AFTER", store.getState());
-      try{
-        res.send(renderer(req, store));
+      try {
+        const content = renderer(req, store, context);
+        if (!!context.notFound) {
+          res.status(404);
+        }
+        res.send(content);
       } catch (e) {
         console.log(e);
         throw e;
